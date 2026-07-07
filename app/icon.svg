@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Tailor tab mark">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0f2a29"/>
+      <stop offset="0.52" stop-color="#050706"/>
+      <stop offset="1" stop-color="#211008"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="112" y1="420" x2="405" y2="94" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#cce46b"/>
+      <stop offset="0.46" stop-color="#f06423"/>
+      <stop offset="1" stop-color="#ff7432"/>
+    </linearGradient>
+    <clipPath id="tailor-t">
+      <path d="M94 108h318l-19 76H294l-57 226h-89l57-226H75z"/>
+    </clipPath>
+  </defs>
+  <rect width="512" height="512" rx="88" fill="url(#bg)"/>
+  <path d="M58 82h306" stroke="#cce46b" stroke-width="10" stroke-linecap="square" opacity="0.95"/>
+  <g clip-path="url(#tailor-t)">
+    <rect x="64" y="96" width="376" height="326" fill="#f3efe5"/>
+    <path d="M72 168h344M62 228h312M122 288h232M112 348h220" stroke="#050706" stroke-width="13" opacity="0.92"/>
+  </g>
+  <path d="M122 410 392 104" stroke="url(#accent)" stroke-width="30" stroke-linecap="square"/>
+  <path d="M124 410 179 347M239 278l62-70" stroke="#f3efe5" stroke-width="7" stroke-linecap="square" opacity="0.70"/>
+</svg>

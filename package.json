@@ -1,0 +1,31 @@
+{
+  "name": "tlr",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "typecheck:unused": "tsc --noEmit --noUnusedLocals --noUnusedParameters",
+    "check:dead": "knip --include files,exports,types,dependencies",
+    "check:security": "npx --yes audit-ci@^7 --config ./audit-ci.jsonc",
+    "test": "node --import tsx --test \"lib/**/*.test.ts\"",
+    "check": "npm run test && npm run typecheck && npm run typecheck:unused && npm run check:dead && npm run check:security && npm run build"
+  },
+  "dependencies": {
+    "next": "^16.2.10",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "recharts": "^2.15.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "knip": "^6.25.0",
+    "tsx": "^4.23.0",
+    "typescript": "^5.7.0"
+  },
+  "license": "Apache-2.0"
+}
