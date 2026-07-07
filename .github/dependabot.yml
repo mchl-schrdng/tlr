@@ -5,6 +5,16 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
+    # Still receive patch/minor bumps, but skip disruptive majors we've
+    # deliberately deferred: recharts 3 (breaks all chart tooltips), TypeScript 6
+    # (no benefit over 5 here), and @types/node ahead of the Node 22 runtime.
+    ignore:
+      - dependency-name: "recharts"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
