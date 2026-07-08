@@ -430,6 +430,103 @@ main {
   gap: 10px;
 }
 
+/* Fitness trajectory — the headline "are you getting fitter?" verdict. */
+.fitness-verdict {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 0.4fr);
+  gap: 18px;
+  align-items: center;
+  margin-top: 14px;
+  padding: 18px 22px;
+  border: 1px solid rgba(238, 232, 216, 0.16);
+  border-left-width: 3px;
+  background:
+    repeating-linear-gradient(0deg, rgba(245, 241, 232, 0.022) 0 1px, transparent 1px 8px),
+    linear-gradient(110deg, rgba(245, 241, 232, 0.05), rgba(245, 241, 232, 0.015) 60%, rgba(233, 93, 42, 0.05)),
+    rgba(8, 9, 8, 0.7);
+  box-shadow: var(--shadow);
+}
+
+.fitness-verdict.good { border-left-color: rgba(84, 210, 115, 0.65); }
+.fitness-verdict.warn { border-left-color: rgba(240, 186, 73, 0.75); }
+.fitness-verdict.info { border-left-color: rgba(119, 189, 249, 0.65); }
+
+/* Honest empty state: comparable-run cohort too small to judge. */
+.fitness-verdict.muted {
+  grid-template-columns: 1fr;
+  border-left-color: rgba(238, 232, 216, 0.28);
+}
+.fitness-verdict.muted h3 {
+  font-size: clamp(18px, 2vw, 24px);
+  color: rgba(244, 240, 231, 0.82);
+}
+
+.fv-kicker {
+  color: var(--accent-2);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 860;
+  text-transform: uppercase;
+}
+
+.fv-main h3 {
+  margin: 6px 0 5px;
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 0.98;
+  text-transform: uppercase;
+}
+
+.fv-main p {
+  margin: 0;
+  max-width: 70ch;
+  color: rgba(244, 240, 231, 0.74);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.fv-stat {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+  text-align: right;
+}
+
+.fv-delta {
+  font-family: var(--font-mono);
+  font-size: clamp(30px, 4vw, 46px);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.fitness-verdict.good .fv-delta { color: #6fe08a; }
+.fitness-verdict.warn .fv-delta { color: #f0ba49; }
+.fitness-verdict.info .fv-delta { color: #9fd0ff; }
+
+.fv-paces {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: rgba(244, 240, 231, 0.82);
+}
+
+.fv-paces .label {
+  margin-top: 3px;
+  color: rgba(244, 240, 231, 0.5);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+  .fitness-verdict {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .fv-stat {
+    justify-items: start;
+    text-align: left;
+  }
+}
+
 .ai-panel {
   position: relative;
   overflow: hidden;

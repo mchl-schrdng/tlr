@@ -361,6 +361,32 @@ const en = {
       evValue: (pct: string) => `drift ${pct}%`,
       formula: "Drift = 1 − EF(2nd half)/EF(1st half), EF = speed ÷ HR.",
     },
+    efficiency: {
+      metric: "Aerobic efficiency",
+      kicker: "Fitness trajectory · 12 wk",
+      needData: {
+        title: "Not enough comparable runs",
+        message: "To judge whether you're getting fitter I need flat, outdoor, easy runs in both the last 6 weeks and the 6 before. Treadmill and hilly/trail runs are set aside so terrain can't fake a trend.",
+      },
+      improving: {
+        title: "You're getting fitter",
+        message: (hr: string, pace: string, pct: string) => `At ~${hr} bpm you now run about ${pace}/km faster than 6 weeks ago (efficiency ${pct}). Your aerobic engine is improving.`,
+        action: "Keep the easy volume coming — your aerobic base is responding.",
+      },
+      declining: {
+        title: "Efficiency slipping",
+        message: (hr: string, pace: string, pct: string) => `At ~${hr} bpm you're about ${pace}/km slower than 6 weeks ago (efficiency ${pct}). You're working harder for the same pace — a sign of fatigue or lost base.`,
+        action: "Bank easy Z2 volume and watch your load; back off if fatigue is stacking up.",
+      },
+      flat: {
+        title: "Fitness holding steady",
+        message: (hr: string, pace: string, pct: string) => `At ~${hr} bpm your pace is within ${pace}/km of 6 weeks ago (efficiency ${pct}). Aerobic fitness is stable.`,
+        action: "A block of easy volume or sharper sessions would move the needle.",
+      },
+      evBaseline: (hr: string) => `Pace at ${hr} bpm · 6 wks ago`,
+      evRecent: (hr: string) => `Pace at ${hr} bpm · now`,
+      formula: "Efficiency Factor EF = avg speed ÷ avg HR, median of comparable runs only — aerobic HR band, outdoor (no treadmill) and flat (under 12 m climb per km). Recent 6-week window vs the 6 before, re-expressed as pace at your median aerobic HR.",
+    },
   },
 
   runsPage: {
@@ -756,6 +782,32 @@ const fr: Dictionary = {
       metric: "Dérive médiane",
       evValue: (pct: string) => `dérive ${pct}%`,
       formula: "Dérive = 1 − EF(2e moitié)/EF(1re moitié), EF = vitesse ÷ FC.",
+    },
+    efficiency: {
+      metric: "Efficacité aérobie",
+      kicker: "Trajectoire de forme · 12 sem.",
+      needData: {
+        title: "Pas assez de runs comparables",
+        message: "Pour juger si tu progresses, il me faut des sorties faciles, à plat et en extérieur sur les 6 dernières semaines ET les 6 précédentes. Les runs tapis et vallonnés/trail sont écartés pour que le terrain ne fausse pas la tendance.",
+      },
+      improving: {
+        title: "Tu progresses",
+        message: (hr: string, pace: string, pct: string) => `À ~${hr} bpm, tu cours maintenant environ ${pace}/km plus vite qu'il y a 6 semaines (efficacité ${pct}). Ton moteur aérobie s'améliore.`,
+        action: "Continue le volume facile — ta base aérobie répond.",
+      },
+      declining: {
+        title: "Efficacité en baisse",
+        message: (hr: string, pace: string, pct: string) => `À ~${hr} bpm, tu es environ ${pace}/km plus lent qu'il y a 6 semaines (efficacité ${pct}). Tu forces plus pour la même allure — signe de fatigue ou de base perdue.`,
+        action: "Accumule du volume facile en Z2 et surveille ta charge ; lève le pied si la fatigue s'installe.",
+      },
+      flat: {
+        title: "Forme stable",
+        message: (hr: string, pace: string, pct: string) => `À ~${hr} bpm, ton allure est à moins de ${pace}/km d'il y a 6 semaines (efficacité ${pct}). Ta forme aérobie est stable.`,
+        action: "Un bloc de volume facile ou des séances plus vives feraient bouger les choses.",
+      },
+      evBaseline: (hr: string) => `Allure à ${hr} bpm · il y a 6 sem.`,
+      evRecent: (hr: string) => `Allure à ${hr} bpm · maintenant`,
+      formula: "Facteur d'efficacité EF = vitesse moy. ÷ FC moy., médiane des sorties comparables uniquement — zone aérobie, en extérieur (hors tapis) et à plat (moins de 12 m de dénivelé par km). Fenêtre récente de 6 semaines vs les 6 précédentes, ré-exprimée en allure à ta FC aérobie médiane.",
     },
   },
 

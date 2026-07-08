@@ -2,7 +2,8 @@ import type { ActivityRow, StreamSet } from "@/lib/db";
 import { computeAcwr, sessionLoad } from "@/lib/metrics/aggregate";
 import { computeDecoupling } from "@/lib/metrics/perRun";
 import { estimateVdot, racePredictions } from "@/lib/metrics/vo2max";
-import { fmtDuration } from "@/lib/format";
+import { efficiencyTrajectory } from "@/lib/metrics/efficiencytrend";
+import { fmtDuration, fmtPaceFromSecPerKm } from "@/lib/format";
 import { ACWR_LOW, ACWR_HIGH, ACWR_DANGER, DECOUPLING_THRESHOLD } from "@/lib/config";
 import type { Dictionary } from "@/lib/i18n/dict";
 import type { Evidence, Insight } from "./types";
@@ -14,6 +15,8 @@ export type InsightContext = {
   now: Date;
   // Best sustained effort used to estimate fitness and predict race times.
   refEffort?: { distanceM: number; seconds: number } | null;
+  // Raw Strava JSON per activity id, used to read the treadmill flag.
+  rawById?: Map<number, unknown>;
 };
 
 const DAY = 86400_000;
@@ -23,10 +26,48 @@ const km = (m: number) => `${Math.round(m / 1000)} km`;
 // when its data is insufficient, so the list never contains empty cards.
 export function buildInsights(ctx: InsightContext): Insight[] {
   return [
+    efficiencyTrendInsight(ctx),
     fitnessPredictionInsight(ctx),
     trainingLoadInsight(ctx),
     aerobicBaseInsight(ctx),
   ].filter((i): i is Insight => i !== null);
+}
+
+// "Are you actually getting fitter?" — the aerobic-efficiency trajectory. Compares
+// pace-at-HR (EF) over the recent 6 weeks against the 6 before, on aerobic-band
+// runs only, and states the result as a pace change at the athlete's median
+// aerobic HR. This is the app's headline longitudinal verdict.
+function efficiencyTrendInsight(ctx: InsightContext): Insight | null {
+  const traj = efficiencyTrajectory(ctx.activities, { now: ctx.now, rawById: ctx.rawById });
+  if (!traj) return null;
+
+  const e = ctx.t.ins.efficiency;
+  const hr = String(Math.round(traj.refHr));
+  const paceGap = `${Math.round(Math.abs(traj.paceDeltaSecPerKm))} s`;
+  const pct = `${traj.deltaPct >= 0 ? "+" : "−"}${Math.abs(traj.deltaPct).toFixed(1)}%`;
+
+  const state =
+    traj.direction === "improving"
+      ? { copy: e.improving, severity: "good" as const }
+      : traj.direction === "declining"
+        ? { copy: e.declining, severity: "warn" as const }
+        : { copy: e.flat, severity: "info" as const };
+
+  const evidence: Evidence[] = [
+    { kind: "metric", label: e.evBaseline(hr), value: fmtPaceFromSecPerKm(traj.baselinePaceSecPerKm) },
+    { kind: "metric", label: e.evRecent(hr), value: fmtPaceFromSecPerKm(traj.recentPaceSecPerKm) },
+  ];
+
+  return {
+    id: "aerobic-efficiency",
+    severity: state.severity,
+    title: state.copy.title,
+    message: state.copy.message(hr, paceGap, pct),
+    metric: { label: e.metric, value: pct },
+    action: state.copy.action,
+    evidence,
+    formula: e.formula,
+  };
 }
 
 function fitnessPredictionInsight(ctx: InsightContext): Insight | null {

@@ -10,6 +10,7 @@ import { powerCurve } from "@/lib/metrics/powercurve";
 import { assessRunQuality, qualitySummary, surfaceSplitSummary } from "@/lib/metrics/quality";
 import { computeDecoupling } from "@/lib/metrics/perRun";
 import { estimateVdot, racePredictions } from "@/lib/metrics/vo2max";
+import { efficiencyTrajectory } from "@/lib/metrics/efficiencytrend";
 import { buildInsights } from "@/lib/insights/engine";
 import { coach } from "@/lib/coaching";
 import {
@@ -176,8 +177,11 @@ export default async function Dashboard({
         getStream: (id) => getStreams(id),
         now,
         refEffort: refPb ? { distanceM: refPb.distanceM, seconds: refPb.seconds } : null,
+        rawById,
       })
     : [];
+
+  const trajectory = runs.length ? efficiencyTrajectory(runs, { now, rawById }) : null;
 
   const pill = acwrPill(t, acwr?.ratio ?? null);
   const status = acwrCopy(t, acwr?.ratio ?? null);
@@ -318,6 +322,47 @@ export default async function Dashboard({
               </div>
             </div>
           </section>
+
+          {!trajectory && runs.length > 0 && (
+            <section className="fitness-verdict muted">
+              <div className="fv-main">
+                <div className="fv-kicker">{t.ins.efficiency.kicker} · no LLM</div>
+                <h3>{t.ins.efficiency.needData.title}</h3>
+                <p>{t.ins.efficiency.needData.message}</p>
+              </div>
+            </section>
+          )}
+
+          {trajectory && (() => {
+            const e = t.ins.efficiency;
+            const hr = String(Math.round(trajectory.refHr));
+            const paceGap = `${Math.round(Math.abs(trajectory.paceDeltaSecPerKm))} s`;
+            const pct = `${trajectory.deltaPct >= 0 ? "+" : "−"}${Math.abs(trajectory.deltaPct).toFixed(1)}%`;
+            const copy =
+              trajectory.direction === "improving" ? e.improving
+                : trajectory.direction === "declining" ? e.declining
+                : e.flat;
+            const cls =
+              trajectory.direction === "improving" ? "good"
+                : trajectory.direction === "declining" ? "warn"
+                : "info";
+            return (
+              <section className={`fitness-verdict ${cls}`}>
+                <div className="fv-main">
+                  <div className="fv-kicker">{e.kicker} · no LLM</div>
+                  <h3>{copy.title}</h3>
+                  <p>{copy.message(hr, paceGap, pct)}</p>
+                </div>
+                <div className="fv-stat">
+                  <div className="fv-delta">{pct}</div>
+                  <div className="fv-paces">
+                    {fmtPaceFromSecPerKm(trajectory.baselinePaceSecPerKm)} → {fmtPaceFromSecPerKm(trajectory.recentPaceSecPerKm)}
+                    <div className="label">{e.evRecent(hr)}</div>
+                  </div>
+                </div>
+              </section>
+            );
+          })()}
 
           <section className="decision-grid">
             <div className="panel decision-card decision-primary">

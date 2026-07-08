@@ -142,6 +142,7 @@ export function buildTrainingSnapshot(t: Dictionary, locale: Locale): TrainingSn
         getStream: (id) => getStreams(id),
         now,
         refEffort: refPb ? { distanceM: refPb.distanceM, seconds: refPb.seconds } : null,
+        rawById,
       })
     : [];
   const loadStatus = acwrCopy(t, acwr?.ratio ?? null);

@@ -76,6 +76,23 @@ test("fitness-prediction insight appears with a reference effort and cites race 
   assert.ok(f!.evidence.some((e) => e.label === "Marathon"));
 });
 
+test("aerobic-efficiency insight flags improvement when pace-at-HR gets faster", () => {
+  const DAY = 86400_000;
+  const t0 = now.getTime();
+  const mk = (id: number, daysAgo: number, speed: number) =>
+    run({ id, start_date: new Date(t0 - daysAgo * DAY).toISOString(), avg_hr: 140, avg_speed: speed });
+  const acts = [
+    mk(1, 60, 3.0), mk(2, 63, 3.0), mk(3, 66, 3.0), // baseline window, slower at 140 bpm
+    mk(4, 10, 3.2), mk(5, 13, 3.2), mk(6, 16, 3.2), // recent window, faster at 140 bpm
+  ];
+  const ins = buildInsights({ t: en, activities: acts, getStream: noStream, now });
+  const e = ins.find((i) => i.id === "aerobic-efficiency");
+  assert.ok(e);
+  assert.equal(e!.severity, "good");
+  assert.ok(e!.metric!.value.startsWith("+"));
+  assert.ok(e!.evidence.length >= 2);
+});
+
 test("no insight emitted when there is no data", () => {
   const ins = buildInsights({ t: en, activities: [], getStream: noStream, now });
   assert.equal(ins.length, 0);
